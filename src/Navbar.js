@@ -6,7 +6,7 @@ const MyNavbar = () => {
   return (
     <Navbar bg="dark" variant="dark" expand="lg">
       <Container>
-        {/* Brand Logo */}
+        {/* Logo */}
         <Navbar.Brand href="/">
           <img src="/images/gift.png" alt="Gift Shop" style={{ height: '30px' }} />
         </Navbar.Brand>

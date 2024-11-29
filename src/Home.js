@@ -11,7 +11,6 @@ const Home = () => {
           <hr />
           <h3>Our Featured Products</h3>
           
-          {/* Image Grid */}
           <Row>
             <Col sm={4}>
               <img src="/images/img.png" alt="product 1" className="img-responsive" />
