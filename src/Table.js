@@ -1,52 +1,73 @@
 import React from 'react';
-import { useReactTable } from '@tanstack/react-table';
-
+import {
+  useReactTable,
+  getCoreRowModel,
+  flexRender,
+  createColumnHelper,
+} from '@tanstack/react-table';
 
 const Table = () => {
   const data = React.useMemo(
     () => [
       { name: 'John', age: 28 },
       { name: 'Jane', age: 32 },
+      { name: 'Joe', age: 40 },
+      { name: 'Jim', age: 28 },
     ],
     []
   );
+
+  const columnHelper = createColumnHelper();
 
   const columns = React.useMemo(
     () => [
-      { Header: 'Name', accessor: 'name' },
-      { Header: 'Age', accessor: 'age' },
+      columnHelper.accessor('name', {
+        header: 'Name',
+        cell: info => info.getValue(),
+      }),
+      columnHelper.accessor('age', {
+        header: 'Age',
+        cell: info => info.getValue(),
+      }),
     ],
-    []
+    [columnHelper]
   );
 
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useReactTable({
-    columns,
+  const table = useReactTable({
     data,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
   });
-  
 
   return (
-    <table {...getTableProps()}>
+    <table style={{ borderCollapse: 'collapse', width: '50%', margin: '20px auto' }}>
       <thead>
-        {headerGroups.map(headerGroup => (
-          <tr {...headerGroup.getHeaderGroupProps()}>
-            {headerGroup.headers.map(column => (
-              <th {...column.getHeaderProps()}>{column.render('Header')}</th>
+        {table.getHeaderGroups().map(headerGroup => (
+          <tr key={headerGroup.id}>
+            {headerGroup.headers.map(header => (
+              <th
+                key={header.id}
+                style={{ border: '1px solid black', padding: '8px', backgroundColor: '#f2f2f2' }}
+              >
+                {flexRender(header.column.columnDef.header, header.getContext())}
+              </th>
             ))}
           </tr>
         ))}
       </thead>
-      <tbody {...getTableBodyProps()}>
-        {rows.map(row => {
-          prepareRow(row);
-          return (
-            <tr {...row.getRowProps()}>
-              {row.cells.map(cell => {
-                return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>;
-              })}
-            </tr>
-          );
-        })}
+      <tbody>
+        {table.getRowModel().rows.map(row => (
+          <tr key={row.id}>
+            {row.getVisibleCells().map(cell => (
+              <td
+                key={cell.id}
+                style={{ border: '1px solid black', padding: '8px', textAlign: 'center' }}
+              >
+                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              </td>
+            ))}
+          </tr>
+        ))}
       </tbody>
     </table>
   );
