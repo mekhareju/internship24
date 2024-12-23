@@ -7,10 +7,18 @@
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+<<<<<<< HEAD
     "axios": "^1.7.9",
     "bootstrap": "^5.3.3",
     "express": "^4.21.2",
+=======
+    "bcrypt": "^5.1.1",
+    "bootstrap": "^5.3.3",
+    "cors": "^2.8.5",
+>>>>>>> 469e67c8ae512d717da8a5de42f563b298295467
     "jquery": "^3.7.1",
+    "mongodb": "^6.12.0",
+    "mongoose": "^8.9.0",
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.6",
     "react-dom": "^18.3.1",
