@@ -1,36 +1,35 @@
-import React, { useState } from 'react'; // Import React and useState hook
-import { useNavigate } from 'react-router-dom'; // Import for programmatic navigation
+import React, { useState } from 'react'; 
+import { useNavigate } from 'react-router-dom'; 
 
 const SignUp = () => {
-  const [name, setName] = useState(''); // State for name input
-  const [email, setEmail] = useState(''); // State for email input
-  const [password, setPassword] = useState(''); // State for password input
-  const [message, setMessage] = useState(''); // State for feedback messages
+  const [name, setName] = useState(''); 
+  const [email, setEmail] = useState(''); 
+  const [password, setPassword] = useState(''); 
+  const [message, setMessage] = useState(''); 
 
-  const navigate = useNavigate(); // Hook to navigate between routes
+  const navigate = useNavigate(); 
 
-  // Handle form submission
   const handleSignUp = async (e) => {
-    e.preventDefault(); // Prevent default form submission behavior
+    e.preventDefault(); 
 
     try {
       const response = await fetch('http://localhost:5000/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password }), // Send input data as JSON
+        body: JSON.stringify({ name, email, password }), 
       });
 
-      const data = await response.json(); // Parse the response JSON
+      const data = await response.json(); 
 
       if (response.ok) {
-        setMessage('User registered successfully!'); // Success message
+        setMessage('User registered successfully!'); 
         setTimeout(() => navigate('/login'), 2000); // Redirect to login after 2 seconds
       } else {
-        setMessage(data.message || 'Signup failed.'); // Error message
+        setMessage(data.message || 'Signup failed.'); 
       }
     } catch (error) {
       console.error('Error:', error);
-      setMessage('Something went wrong. Please try again.'); // General error message
+      setMessage('Something went wrong. Please try again.'); 
     }
   };
 
