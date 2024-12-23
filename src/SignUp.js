@@ -1,37 +1,56 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'; // Import React and useState hook
+import { useNavigate } from 'react-router-dom'; // Import for programmatic navigation
 
-const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [message, setMessage] = useState('');
+const SignUp = () => {
+  const [name, setName] = useState(''); // State for name input
+  const [email, setEmail] = useState(''); // State for email input
+  const [password, setPassword] = useState(''); // State for password input
+  const [message, setMessage] = useState(''); // State for feedback messages
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
+  const navigate = useNavigate(); // Hook to navigate between routes
+
+  // Handle form submission
+  const handleSignUp = async (e) => {
+    e.preventDefault(); // Prevent default form submission behavior
+
     try {
-      const response = await fetch('http://localhost:5000/auth/login', {
+      const response = await fetch('http://localhost:5000/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ name, email, password }), // Send input data as JSON
       });
 
+      const data = await response.json(); // Parse the response JSON
+
       if (response.ok) {
-        const data = await response.json();
-        setMessage(data.message); // Display success message from the server
+        setMessage('User registered successfully!'); // Success message
+        setTimeout(() => navigate('/login'), 2000); // Redirect to login after 2 seconds
       } else {
-        const errorData = await response.json();
-        setMessage(errorData.message || 'Error signing in');
+        setMessage(data.message || 'Signup failed.'); // Error message
       }
     } catch (error) {
       console.error('Error:', error);
-      setMessage('Something went wrong. Please try again.');
+      setMessage('Something went wrong. Please try again.'); // General error message
     }
   };
 
   return (
     <div style={styles.container}>
       <div style={styles.formBox}>
-        <h2 style={styles.heading}>Login</h2>
-        <form onSubmit={handleLogin}>
+        <h2 style={styles.heading}>Sign Up</h2>
+        <form onSubmit={handleSignUp}>
+          <div style={styles.formGroup}>
+            <label style={styles.label} htmlFor="name">Name</label>
+            <input
+              style={styles.input}
+              type="text"
+              id="name"
+              placeholder="Enter your name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+          </div>
           <div style={styles.formGroup}>
             <label style={styles.label} htmlFor="email">Email</label>
             <input
@@ -56,11 +75,11 @@ const Login = () => {
               required
             />
           </div>
-          <button style={styles.button} type="submit">Login</button>
+          <button style={styles.button} type="submit">Sign Up</button>
         </form>
         {message && <p style={styles.message}>{message}</p>}
         <p style={styles.switchText}>
-          Don't have an account? <a href="/signup" style={styles.link}>Sign Up</a>
+          Already have an account? <a href="/login" style={styles.link}>Login</a>
         </p>
       </div>
     </div>
@@ -129,4 +148,4 @@ const styles = {
   },
 };
 
-export default Login;
+export default SignUp;
