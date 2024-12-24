@@ -1,12 +1,25 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false); // State to handle loading
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
+
+    // Basic validation
+    if (!email || !password) {
+      setMessage('Please enter both email and password');
+      return;
+    }
+
+    setLoading(true); // Set loading state to true during the request
+    setMessage(''); // Clear previous messages
+
     try {
       const response = await fetch('http://localhost:5000/auth/login', {
         method: 'POST',
@@ -16,117 +29,83 @@ const Login = () => {
 
       if (response.ok) {
         const data = await response.json();
-        setMessage(data.message); // Display success message from the server
+        setMessage('Login successful!');
+        setLoading(false);
+        navigate(`/profile/${data.user._id}`); // Redirect to profile page with user ID
       } else {
         const errorData = await response.json();
-        setMessage(errorData.message || 'Error signing in');
+        setMessage(errorData.message || 'Invalid email or password');
+        setLoading(false);
       }
     } catch (error) {
       console.error('Error:', error);
       setMessage('Something went wrong. Please try again.');
+      setLoading(false);
     }
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.formBox}>
-        <h2 style={styles.heading}>Login</h2>
-        <form onSubmit={handleLogin}>
-          <div style={styles.formGroup}>
-            <label style={styles.label} htmlFor="email">Email</label>
-            <input
-              style={styles.input}
-              type="email"
-              id="email"
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-          <div style={styles.formGroup}>
-            <label style={styles.label} htmlFor="password">Password</label>
-            <input
-              style={styles.input}
-              type="password"
-              id="password"
-              placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-          <button style={styles.button} type="submit">Login</button>
-        </form>
-        {message && <p style={styles.message}>{message}</p>}
-        <p style={styles.switchText}>
-          Don't have an account? <a href="/signup" style={styles.link}>Sign Up</a>
+    <div style={{ textAlign: 'center', marginTop: '50px' }}>
+      <h2>Login</h2>
+      <form onSubmit={handleLogin} style={{ maxWidth: '400px', margin: '0 auto' }}>
+        <div style={{ marginBottom: '15px' }}>
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            style={{
+              width: '100%',
+              padding: '10px',
+              fontSize: '16px',
+              marginBottom: '10px',
+              borderRadius: '5px',
+              border: '1px solid #ccc',
+            }}
+          />
+        </div>
+        <div style={{ marginBottom: '15px' }}>
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            style={{
+              width: '100%',
+              padding: '10px',
+              fontSize: '16px',
+              marginBottom: '10px',
+              borderRadius: '5px',
+              border: '1px solid #ccc',
+            }}
+          />
+        </div>
+        <button
+          type="submit"
+          disabled={loading} // Disable button while loading
+          style={{
+            width: '100%',
+            padding: '10px',
+            fontSize: '16px',
+            borderRadius: '5px',
+            backgroundColor: loading ? '#ccc' : '#007BFF',
+            color: 'white',
+            border: 'none',
+            cursor: loading ? 'not-allowed' : 'pointer',
+          }}
+        >
+          {loading ? 'Logging in...' : 'Login'}
+        </button>
+      </form>
+      {message && (
+        <p style={{ marginTop: '15px', color: message.includes('successful') ? 'green' : 'red' }}>
+          {message}
         </p>
-      </div>
+      )}
     </div>
   );
-};
-
-const styles = {
-  container: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '100vh',
-    backgroundColor: '#f3f4f6',
-  },
-  formBox: {
-    backgroundColor: '#fff',
-    padding: '30px',
-    borderRadius: '8px',
-    boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
-    width: '100%',
-    maxWidth: '400px',
-  },
-  heading: {
-    textAlign: 'center',
-    marginBottom: '20px',
-    color: '#333',
-  },
-  formGroup: {
-    marginBottom: '20px',
-  },
-  label: {
-    display: 'block',
-    fontSize: '14px',
-    marginBottom: '8px',
-    color: '#555',
-  },
-  input: {
-    width: '100%',
-    padding: '12px',
-    borderRadius: '8px',
-    border: '2px solid #ccc',
-    boxSizing: 'border-box',
-  },
-  button: {
-    width: '100%',
-    padding: '12px',
-    backgroundColor: '#007bff',
-    color: '#fff',
-    borderRadius: '8px',
-    border: 'none',
-    cursor: 'pointer',
-    fontSize: '16px',
-  },
-  message: {
-    textAlign: 'center',
-    color: 'red',
-    marginTop: '10px',
-  },
-  switchText: {
-    textAlign: 'center',
-    marginTop: '20px',
-  },
-  link: {
-    color: '#007bff',
-    textDecoration: 'none',
-  },
 };
 
 export default Login;
